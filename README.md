@@ -6,7 +6,7 @@ A jupyter notebook to scrape sail boat listings to a pandas dataframe for graphi
 
 Copy-paste das-boot.py into a fresh jupyter notebook.
 
-Try something like in a new cell
+Try something like
 ```
 summary(
     listings(
@@ -15,5 +15,6 @@ summary(
     )
 )
 ```
+in a new cell.
 
-Run the whole notebook.
+Run the whole notebook. Calls to `listings` will generate `.csv` files of the results, if you prefer continuing in a spreadsheet.
