@@ -551,43 +551,5 @@ def summary(df):
     diplay_listings(df)
     
 
-
-# In[15]:
-
-
-summary(
-    listings(
-        'Swan',
-        max_year=1990,
-    )
-)
-
-
-# In[16]:
-
-
-summary(
-    listings(
-        'Arcona'
-    )
-)
-
-
-# In[ ]:
-
-
 #saving page cache file
 save_obj(page_cache,cache_filename)
-
-
-# In[ ]:
-
-
-get_page('https://www.approvedboats.com/co-brokerage-boats-for-sale/all-Sail/?AdvancedKeywordSearch=x-yachts&max-price=500000&currency=EUR')
-
-
-# In[ ]:
-
-
-
-
