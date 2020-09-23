@@ -1,6 +1,12 @@
 # das-boot
 A jupyter notebook to scrape sail boat listings to a pandas dataframe for graphing and storing in CSV.
 
+Scrapes the following sites:
+- [nettivene](http://nettivene.com/)
+- [yachtworld](https://www.yachtworld.com/)
+- [boat24](https://www.boat24.com/)
+- [theyachtmarket](https://www.theyachtmarket.com)
+
 ## Instructions
 [Get Jupyter](https://jupyter.org/install), I suggest [miniconda](https://docs.conda.io/en/latest/miniconda.html).
 
