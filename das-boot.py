@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 max_price=500000
 debug=False
 
 
-# In[2]:
+# In[ ]:
 
 
 import requests
@@ -17,8 +17,13 @@ from bs4 import BeautifulSoup
 import re
 import pickle
 from datetime import date
+from pathlib import Path
 
-cache_filename = 'page_cache-'+date.today().isoformat()+'.pickle'
+Path('out').mkdir(parents=True, exist_ok=True)
+Path('cache').mkdir(parents=True, exist_ok=True)
+
+
+cache_filename = 'cache/page_cache-'+date.today().isoformat()+'.pickle'
 page_cache = {}
 try:
     with open(cache_filename, 'rb') as f:
@@ -35,7 +40,7 @@ def memoize(f):
     return helper
 
 
-# In[3]:
+# In[ ]:
 
 
 import functools
@@ -76,7 +81,7 @@ if debug: get_soup = make_soup
 else: get_soup = memoize(make_soup)
 
 
-# In[4]:
+# In[ ]:
 
 
 # Nettivene.com
@@ -181,7 +186,7 @@ def nv_listings(make):
     return l
 
 
-# In[5]:
+# In[ ]:
 
 
 #yachtworld
@@ -245,7 +250,7 @@ def yw_listings(make):
     return l
 
 
-# In[6]:
+# In[ ]:
 
 
 #boat24
@@ -323,7 +328,7 @@ def b24_listings(make):
     return l
 
 
-# In[14]:
+# In[ ]:
 
 
 #yachtmarket
@@ -386,7 +391,64 @@ def ym_listings(make):
     return l
 
 
-# In[8]:
+# In[ ]:
+
+
+#scanboat.com
+@none_on_error
+def sb_loa(url):
+    soup = get_soup(url)
+    l = soup.find('p',string='Length')
+    return float(l.next_sibling.next_sibling.text)
+
+def sb_scrape(make, soup):
+    divs = soup.findAll('div', class_='item')
+    urls = ['https://www.scanboat.com'+div.a['href'] for div in divs]
+
+    sections = soup.findAll('section', class_='flex-1')
+    models = [s.h2.text.replace(make, '').replace(' - ','').strip() for s in sections]
+
+    bodies = soup.findAll('section', class_='item__body')
+
+    deets = [div.p.text.strip().split('|') for div in bodies]
+
+    years = [int(d[1].replace('Year :','').strip()) for d in deets]
+
+    locs = [d[2].replace('Country :','').strip() for d in deets]
+    
+    sections = soup.findAll('section', class_='flex-2 right')
+    prices = [int(s.p.text.replace('EUR','').replace(',','').strip()) for s in sections]
+    
+    lengths = [sb_loa(u) for u in urls]
+
+    return list(
+        zip(
+            urls,
+            models,
+            years,
+            lengths,
+            locs,
+            prices,
+        )
+    )
+
+@none_on_error
+def sb_next_url(soup):
+    return 'https://www.scanboat.com'+soup.find('a',string='Next')['href']
+
+    
+def sb_listings(make):
+    next_url = 'https://www.scanboat.com/en/boats?SearchCriteria.BoatModelText={}&SearchCriteria.BoatTypeID=1&SearchCriteria.Searched=true&SearchCriteria.ExtendedSearch=False'.format(make)
+    
+    l = []
+    while next_url:
+        soup = get_soup(next_url)
+        l += sb_scrape(make,soup)
+        next_url = sb_next_url(soup)
+    return l
+
+
+# In[ ]:
 
 
 def scrape_listings(make):
@@ -394,9 +456,10 @@ def scrape_listings(make):
     yw = yw_listings(make)
     b24 = b24_listings(make)
     ym = ym_listings(make)
+    sb = sb_listings(make)
     
-    df = pd.DataFrame(nv+yw+b24+ym,columns=['url','model','year','loa','location','price'])
-    df.to_csv('listings-'+make.replace(' ', '_').lower()+'.csv')
+    df = pd.DataFrame(nv+yw+b24+ym+sb,columns=['url','model','year','loa','location','price'])
+    df.to_csv('out/listings-'+make.replace(' ', '_').lower()+'.csv')
     
     df = df.round({
         'year': 0,
@@ -412,7 +475,7 @@ else: listings_make = memoize(scrape_listings)
     
 
 
-# In[9]:
+# In[ ]:
 
 
 from forex_python.converter import CurrencyRates
@@ -435,7 +498,7 @@ def sb_history(make,model):
     return sns.lmplot(x="age", y="price_eur", data=df[df.ItemYear > 0], robust=True)
 
 
-# In[10]:
+# In[ ]:
 
 
 ba_re_year_sold = re.compile(r'Sold: (\d\d\d\d-\d\d-\d\d)')
@@ -470,7 +533,7 @@ def ba_listings(make):
     return df
 
 
-# In[11]:
+# In[ ]:
 
 
 from matplotlib import pyplot as plt
@@ -512,7 +575,7 @@ def regplot(df,ax=None):
     return sns.regplot(ax = ax, x="year", y="price", data=df, robust=True);
 
 
-# In[12]:
+# In[ ]:
 
 
 def listings(make, model=None, min_year=None, max_year=None, min_loa=None, max_loa=None):
@@ -551,5 +614,20 @@ def summary(df):
     diplay_listings(df)
     
 
+
+# In[ ]:
+
+
+summary(
+    listings(
+        'Archambault'
+    )
+)
+
+
+# In[ ]:
+
+
 #saving page cache file
 save_obj(page_cache,cache_filename)
+

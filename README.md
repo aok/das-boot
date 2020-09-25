@@ -6,6 +6,7 @@ Scrapes the following sites:
 - [yachtworld](https://www.yachtworld.com/)
 - [boat24](https://www.boat24.com/)
 - [theyachtmarket](https://www.theyachtmarket.com)
+- [scanboat](https://www.scanboat.com/en)
 
 ## Instructions
 [Get Jupyter](https://jupyter.org/install), I suggest [miniconda](https://docs.conda.io/en/latest/miniconda.html).
