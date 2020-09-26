@@ -9,9 +9,10 @@ Scrapes the following sites:
 - [scanboat](https://www.scanboat.com/en)
 
 ## Instructions
-[Get Jupyter](https://jupyter.org/install), I suggest [miniconda](https://docs.conda.io/en/latest/miniconda.html).
-
-Copy-paste das-boot.py into a fresh jupyter notebook.
+1. [Get Jupyter](https://jupyter.org/install), I suggest [miniconda](https://docs.conda.io/en/latest/miniconda.html).
+1. `conda install` libraries, list of imports in the first notebook cell
+1. Open das-boot.ipynb in Jupyter.
+1. Run the whole notebook
 
 Try something like
 ```
@@ -19,9 +20,10 @@ summary(
     listings(
         'Swan',
         max_year=1990,
+        min_loa=12
     )
 )
 ```
 in a new cell.
 
-Run the whole notebook. Calls to `listings` will generate `.csv` files of the results, if you prefer continuing in a spreadsheet.
+Calls to `listings` will generate `.csv` files of the results, if you prefer continuing in a spreadsheet.
