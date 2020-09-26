@@ -27,3 +27,9 @@ summary(
 in a new cell.
 
 Calls to `listings` will generate `.csv` files of the results, if you prefer continuing in a spreadsheet.
+
+## Caveats
+
+This is a web scraper in a notebook; not proper, maintained code. By the time anyone lands here, it's probably broken by changes the websites made.
+
+Hopefully someone wanting the same data can get it faster by fixing this rather than starting from scratch.
