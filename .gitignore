@@ -1,5 +1,5 @@
 .ipynb_checkpoints/
 out/
-cache/
-*backup*
 .DS_Store
+__pycache__/
+cache.sqlite
